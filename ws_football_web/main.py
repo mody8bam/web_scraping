@@ -57,7 +57,7 @@ def main(page):
     print(matches_detail)
     
     keys=matches_detail[0].keys()
-    with open('C:/Users/NIPEAL/OneDrive/Desktop/projectss/py_project_githubs/web_scraping/matches.csv','w',newline='',encoding='utf-8') as f:
+    with open('C:/Users/NIPEAL/OneDrive/Desktop/projectss/py_project_githubs/web_scraping/ws_football_web/matches.csv','w',newline='',encoding='utf-8') as f:
         dict_writer=csv.DictWriter(f,keys)
         dict_writer.writeheader()
         dict_writer.writerows(matches_detail)
