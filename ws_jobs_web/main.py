@@ -103,68 +103,123 @@
 # for job_title in job_titles:
 #     print(job_title)
 
-import requests
+
+#___________________________________________________________________________________________________________________________________________
+
+
+# import requests
+# from bs4 import BeautifulSoup
+# import csv
+# from itertools import zip_longest
+
+# #fetch url
+# result=requests.get("https://wuzzuf.net/search/jobs/?q=python&a=hpb")
+
+# #save page content/markup
+# src= result.content
+
+# #create soup object to parse content
+# soup=BeautifulSoup(src,'lxml')
+
+
+# job_title=[]
+# company_name=[]
+# location_name=[]
+# skills=[]
+
+# #links for every job to get deep description about it
+# links=[]
+
+
+# # job info
+# job_titles=soup.find_all('h2',{'class':'css-m604qf'})
+
+# company_names=soup.find_all('a',{'class':'css-17s97q8'})
+
+# location_names=soup.find_all('span',{'class':'css-5wys0k'})
+
+# job_skills=soup.find_all('div',{'class':'css-y4udm8'})
+
+
+# # iterate over list to extract needed info into othter list
+# for i in range(len(job_titles)):
+#     job_title.append(job_titles[i].text)
+#     links.append(job_titles[i].find('a').attrs['href'])
+#     company_name.append(company_names[i].text)
+#     location_name.append(location_names[i].text)
+#     skills.append(job_skills[i].text)
+    
+    
+# # iterate on every links to get more descriptions for each job
+# for link in links:
+#     result=requests.get(link)
+#     src=result.content
+#     soup=BeautifulSoup(src,'lxml')
+#     salaries=soup.find_all('div',{'class':'css-rcl8e5'})
+#     print(salaries)
+    
+
+
+# file_list=[job_title,company_name,location_name,skills,links]
+
+# exported=zip_longest(*file_list)
+
+# with open(f"C:/Users/NIPEAL/OneDrive/Desktop/projectss/py_project_githubs/web_scraping/ws_jobs_web/jobstest.csv" , 'w',newline='',encoding='utf-8') as f:
+#     wr=csv.writer(f)
+#     wr.writerow(['job title', 'company name', 'locaton','skills','links'])
+#     wr.writerows(
+#          exported
+#     )
+    
+#_____________________________________________________________________________________________________________________________________________________________________
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
-import csv
-from itertools import zip_longest
+import time
+ 
+# Creating a webdriver instance
+chrome_driver_path = "C:/chromedriver-win64/chromedriver.exe"
+service = Service(chrome_driver_path)
 
-#fetch url
-result=requests.get("https://wuzzuf.net/search/jobs/?q=python&a=hpb")
+# This instance will be used to log into LinkedIn
+driver = webdriver.Chrome(service=service)
 
-#save page content/markup
-src= result.content
+# Opening linkedIn's login page
+driver.get("https://linkedin.com/uas/login")
+ 
+# waiting for the page to load
+time.sleep(5)
+ 
+# entering username 
+username = driver.find_element(By.ID, "username")
+ 
+# In case of an error, try changing the element
+# tag used here.
+ 
+# Enter Your Email Address
+username.send_keys("")  
+ 
+# entering password
+pword = driver.find_element(By.ID, "password")
+# In case of an error, try changing the element 
+# tag used here.
+ 
+# Enter Your Password
+pword.send_keys("")        
+ 
+# Clicking on the log in button
+# Format (syntax) of writing XPath --> 
+# //tagname[@attribute='value']
+driver.find_element(By.XPATH, "//button[@type='submit']").click()
+# In case of an error, try changing the
+# XPath used here.
 
-#create soup object to parse content
-soup=BeautifulSoup(src,'lxml')
+# Opening Kunal's Profile
+# paste the URL of Kunal's profile here
+profile_url = "https://www.linkedin.com/in/kunalshah1/"
+ 
+driver.get(profile_url)  
+driver
 
-
-job_title=[]
-company_name=[]
-location_name=[]
-skills=[]
-
-#links for every job to get deep description about it
-links=[]
-
-
-# job info
-job_titles=soup.find_all('h2',{'class':'css-m604qf'})
-
-company_names=soup.find_all('a',{'class':'css-17s97q8'})
-
-location_names=soup.find_all('span',{'class':'css-5wys0k'})
-
-job_skills=soup.find_all('div',{'class':'css-y4udm8'})
-
-
-# iterate over list to extract needed info into othter list
-for i in range(len(job_titles)):
-    job_title.append(job_titles[i].text)
-    links.append(job_titles[i].find('a').attrs['href'])
-    company_name.append(company_names[i].text)
-    location_name.append(location_names[i].text)
-    skills.append(job_skills[i].text)
-    
-    
-# iterate on every links to get more descriptions for each job
-for link in links:
-    result=requests.get(link)
-    src=result.content
-    soup=BeautifulSoup(src,'lxml')
-    salaries=soup.find_all('div',{'class':'css-rcl8e5'})
-    print(salaries)
-    
-
-
-file_list=[job_title,company_name,location_name,skills,links]
-
-exported=zip_longest(*file_list)
-
-with open(f"C:/Users/NIPEAL/OneDrive/Desktop/projectss/py_project_githubs/web_scraping/ws_jobs_web/jobstest.csv" , 'w',newline='',encoding='utf-8') as f:
-    wr=csv.writer(f)
-    wr.writerow(['job title', 'company name', 'locaton','skills','links'])
-    wr.writerows(
-         exported
-    )
-    
-
+#dd 
