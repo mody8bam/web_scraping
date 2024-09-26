@@ -174,10 +174,22 @@
 #_____________________________________________________________________________________________________________________________________________________________________
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+"""
+The By class in selenium.webdriver.common.by is used to locate elements within a web page. It provides a set of attributes that 
+represent different strategies for locating elements. Here are some common attributes you can use with By:
+    By.ID: Locate an element by its ID attribute.
+    By.NAME: Locate an element by its name attribute.
+    By.XPATH: Locate an element using an XPath expression.
+    By.CSS_SELECTOR: Locate an element using a CSS selector.
+    By.CLASS_NAME: Locate an element by its class name.
+    By.TAG_NAME: Locate an element by its tag name.
+    By.LINK_TEXT: Locate a link element by its visible text.
+    By.PARTIAL_LINK_TEXT: Locate a link element by a partial match of its visible text.
+"""
 from selenium.webdriver.chrome.service import Service
 from bs4 import BeautifulSoup
 import time
- 
+#______________________________________________________________________________________________1_____________   
 # Creating a webdriver instance
 chrome_driver_path = "C:/chromedriver-win64/chromedriver.exe"
 service = Service(chrome_driver_path)
@@ -215,6 +227,8 @@ driver.find_element(By.XPATH, "//button[@type='submit']").click()
 # In case of an error, try changing the
 # XPath used here.
 
+
+#______________________________________________________________________________________________2_____________   
 # Opening Kunal's Profile
 # paste the URL of Kunal's profile here
 profile_url = "https://www.linkedin.com/in/kunalshah1/"
@@ -222,4 +236,77 @@ profile_url = "https://www.linkedin.com/in/kunalshah1/"
 driver.get(profile_url)  
 driver
 
-#dd 
+
+
+#______________________________________________________________________________________________3_____________   
+#  Now, we need to scroll to the bottom. Here is the code to do that:
+start = time.time()
+ 
+# will be used in the while loop
+initialScroll = 0
+finalScroll = 1000
+ 
+while True:
+    driver.execute_script(f"window.scrollTo({initialScroll},{finalScroll})")
+    # this command scrolls the window starting from
+    # the pixel value stored in the initialScroll 
+    # variable to the pixel value stored at the
+    # finalScroll variable
+    initialScroll = finalScroll
+    finalScroll += 1000
+ 
+    # we will stop the script for 3 seconds so that 
+    # the data can load
+    time.sleep(3)
+    # You can change it as per your needs and internet speed
+ 
+    end = time.time()
+ 
+    # We will scroll for 20 seconds.
+    # You can change it as per your needs and internet speed
+    if round(end - start) > 20:
+        break
+    
+    
+#______________________________________________________________________________________________4_____________   
+# Extracting Data from the Profile
+# To extract data, firstly, store the source code of the web page in a variable. Then, use this source 
+# code to create a Beautiful Soup object.
+
+
+src = driver.page_source
+ 
+# Now using beautiful soup
+soup = BeautifulSoup(src, 'lxml')
+
+
+# Extracting the HTML of the complete introduction box
+# that contains the name, company name, and the location
+intro = soup.find('div', {'class': 'mt2 relative'})
+
+name=intro.find('h1').get_text().strip()
+works_at_loc = intro.find("div", {'class': 'text-body-medium'}).text.strip()
+location_loc = intro.find_all("span", {'class': 'text-body-small inline t-black--light break-words'})[0].get_text().strip()
+print("Name -->", name,
+      "\nWorks At -->", works_at_loc,
+      "\nLocation -->", location_loc)
+
+
+# Getting the HTML of the Experience section in the profile
+experience = soup.find_all("section", {"class": "artdeco-card pv-profile-card break-words mt2"})[1].find('ul')
+
+
+# exp=soup.find("section", {"class": "artdeco-card pv-profile-card break-words mt2"}).find_all('ul')
+# print(experience==exp[0])  #True
+
+#first exp find to simplify
+print(experience.find('div').find_all('span')[0].text.strip())
+print(experience.find('div').find_all('span')[3].text.strip())
+print(experience.find('div').find_all('span')[6].text.strip())
+
+
+for ex in experience.find_all('div',{'class':"OdisdwCWMtMIJFjwkkjUxJQnurvqaXgQaOX vsAATKtKqqHJBCXrRWgKkmUUPJwuUuo NwliYhHDezFmMFZUqschmUCeDCUsgXzjQoo"}):
+    print(ex.find_all('span')[0].text.strip())
+    print(ex.find_all('span')[3].text.strip())
+    print(ex.find_all('span')[5].text.strip())
+    print("__________________")
