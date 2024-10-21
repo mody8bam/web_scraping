@@ -2,6 +2,10 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 from googletrans import Translator #google API to translate 
+import pandas as pd
+import mysql.connector
+from sqlalchemy import create_engine
+
 
 
 date=input('please enter date in the following format MM/DD/YYYY : ')
@@ -57,11 +61,36 @@ def main(page):
     print(matches_detail)
     
     keys=matches_detail[0].keys()
-    with open('C:/Users/NIPEAL/OneDrive/Desktop/projectss/py_project_githubs/web_scraping/ws_football_web/matches.csv','w',newline='',encoding='utf-8') as f:
-        dict_writer=csv.DictWriter(f,keys)
-        dict_writer.writeheader()
-        dict_writer.writerows(matches_detail)
-        print("file created")
+    try :
+        
+        with open('C:/Users/NIPEAL/OneDrive/Desktop/projectss/py_project_githubs/web_scraping/ws_football_web/matches.csv','w',newline='',encoding='utf-8') as f:
+            dict_writer=csv.DictWriter(f,keys)
+            dict_writer.writeheader()
+            dict_writer.writerows(matches_detail)
+            print("csv file created")
+            
+            
+    except :
+        print('csv and database not been created, something happen.')
+    
+    def to_database(match_detail):
+        db_name=input("enter your database to connect: ")
+        conn=mysql.connector.connect(host='localhost', user ='root',
+                                     password='root',database=db_name,
+                                     use_pure=True)
+        cursor=conn.cursor()
+        table_name=input("enter table name: ")
+        # cursor.execute(f"""CREATE TABLE IF NOT EXIST {table_name}({''.join(match_detail[0].keys())})""")
+        for match in match_detail:
+            cursor.execute(f'''
+                          INSERT INTO {table_name}(tourment,taemA,score,teamB,matchTime)
+                          VALUES ({match['tourment']}, {match['team A']}, {match['score']}, {match['team B']}, {match['match time']} )
+                          ''')
+        conn.commit()
+        conn.close()
+    to_database(match_detail=matches_detail)   
+    
+    
     
 main(page)
 
